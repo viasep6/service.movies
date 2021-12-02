@@ -3,7 +3,7 @@ const axios = require('axios');
 module.exports = function (context, req) {
     let config = {
     method: 'get',
-    url: "https://mowits-movies.azurewebsites.net/movies/moviedetails?movieid=" + req.query.movieid
+    url: "https://mowits-movies.azurewebsites.net/movies/moviedetails?code=" + process.env["MOVIEDETAILS_FUNCTION_KEY"] + "&movieid=" + req.query.movieid
 };
 
     return axios(config)
