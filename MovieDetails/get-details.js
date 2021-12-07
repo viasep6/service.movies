@@ -80,18 +80,33 @@ exports.getMovieDetailsWithCast = (request, response) => {
             movieDetails.spoken_languages = languageArray.join(", ");
             
             let movieCast = results[1].cast;
-            let filteredCrew = movieCast.map(crew => {
+            let filteredCast = movieCast.map(cast => {
+                let profile_picture_path = (cast.profile_path !== null ? process.env["TMDB_API_IMAGE_BASE_URL"] + cast.profile_path : null)
+
+                return {
+                    "id": cast.id,
+                    "name": cast.name,
+                    "character": cast.character,
+                    "picture_path": profile_picture_path
+                }
+            });
+
+            let movieCrew = results[1].crew;
+            let directors = movieCrew.filter(crew => crew.job === "Director").map(crew => {
+                let profile_picture_path = (crew.profile_path !== null ? process.env["TMDB_API_IMAGE_BASE_URL"] + crew.profile_path : null)
+
                 return {
                     "id": crew.id,
                     "name": crew.name,
-                    "character": crew.character,
-                    "picture_path": process.env["TMDB_API_IMAGE_BASE_URL"] + crew.profile_path
+                    "job": crew.job,
+                    "picture_path": profile_picture_path
                 }
             });
 
             let detailsWithCast = {
                 ...movieDetails,
-                crew: [...filteredCrew]
+                cast: [...filteredCast],
+                crew: [...directors]
             }
             
             return response.res.json(detailsWithCast);
