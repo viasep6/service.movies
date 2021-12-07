@@ -71,6 +71,14 @@ exports.getMovieDetailsWithCast = (request, response) => {
             movieDetails.backdrop_path = process.env["TMDB_API_IMAGE_BASE_URL"] + movieDetails.backdrop_path;
             movieDetails.production_companies.map(company => company.logo_path = process.env["TMDB_API_IMAGE_BASE_URL"] + company.logo_path);
             
+            let genreArray = []
+            movieDetails.genres.map(genres => genreArray.push(genres.name))
+            movieDetails.genres = genreArray.join(", ");
+
+            let languageArray = []
+            movieDetails.spoken_languages.map(languages => languageArray.push(languages.name))
+            movieDetails.spoken_languages = languageArray.join(", ");
+            
             let movieCast = results[1].cast;
             let filteredCrew = movieCast.map(crew => {
                 return {
