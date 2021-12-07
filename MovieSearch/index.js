@@ -14,7 +14,8 @@ module.exports = function (context, req) {
         let filteredResponse = response.data.results.map(movie => {
             return {
                 "id": movie.id,
-                "title": movie.title + " (" + movie.release_date.split("-")[0] + ")"
+                "title": movie.title,
+                "release_date": movie.release_date
             }
         });
 
@@ -30,7 +31,7 @@ module.exports = function (context, req) {
     {
         context.res = {
             status: 500,
-            body: error
+            body: error.message
            }
     });
 }
