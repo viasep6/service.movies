@@ -67,8 +67,10 @@ exports.getMovieDetailsWithCast = (request, response) => {
         .then(function (results) {
             let movieDetails = results[0];
             
-            movieDetails.poster_path = process.env["TMDB_API_IMAGE_BASE_URL"] + movieDetails.poster_path;
-            movieDetails.backdrop_path = process.env["TMDB_API_IMAGE_BASE_URL"] + movieDetails.backdrop_path;
+            if (movieDetails.poster_path !== null || movieDetails.poster_path !== null) {
+                movieDetails.poster_path = process.env["TMDB_API_IMAGE_BASE_URL"] + movieDetails.poster_path;
+                movieDetails.backdrop_path = process.env["TMDB_API_IMAGE_BASE_URL"] + movieDetails.backdrop_path;
+            }
             movieDetails.production_companies.map(company => company.logo_path = process.env["TMDB_API_IMAGE_BASE_URL"] + company.logo_path);
             
             let genreArray = []
