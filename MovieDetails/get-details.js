@@ -69,7 +69,6 @@ getLocalMovieDetails = async (request, response) => {
     const movieRef = db.doc('movies/' + movieId);
     const movieDoc = await movieRef.get()
     if (movieDoc.exists) {
-        console.log("exists");
         const movieData = movieDoc.data()
         if (request.query.userId) {
             const userId = request.query.userId;
@@ -83,7 +82,6 @@ getLocalMovieDetails = async (request, response) => {
         delete res.title
     }
 
-    console.log("result: ", res);
     return res
 }
 

@@ -11,12 +11,15 @@ module.exports = function (context, req) {
     return axios(config)
     .then(function (response)
     {
+        console.log(response.data);
         let filteredResponse = response.data.results.map(movie => {
-            return {
-                "id": movie.id,
-                "title": movie.title,
-                "release_date": movie.release_date
+
+            if (movie.poster_path !== null || response.data.results.poster_path !== null) {
+                movie.poster_path = process.env["TMDB_API_IMAGE_BASE_URL"] + movie.poster_path;
+                movie.backdrop_path = process.env["TMDB_API_IMAGE_BASE_URL"] + movie.backdrop_path;
             }
+    
+            return movie
         });
 
         context.res = {
