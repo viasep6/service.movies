@@ -74,7 +74,12 @@ getLocalMovieDetails = async (request, response) => {
             const userId = request.query.userId;
             const followers = movieData.followers?.map(x => x.id)
             // check if user is subscribed to movie
-            res.isSubscribed = followers.includes(userId)            
+            if (followers !== undefined) {
+                res.isSubscribed = followers.includes(userId)  
+            } else {
+                res.isSubscribed = false;
+            }
+                      
 
         }
         res = {...res, ...movieData};
