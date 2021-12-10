@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { db, admin } = require('../service.shared/Repository/Firebase/admin')
 
 getMovieDetails = (request, response) => {
     let config = {
@@ -61,9 +62,34 @@ getMovieCast = (request, response) => {
         });
 }
 
-exports.getMovieDetailsWithCast = (request, response) => {
+getLocalMovieDetails = async (request, response) => {
+    const movieId = request.query.movieid;
+    let res = {}
 
-    Promise.all([getMovieDetails(request, response), getMovieCast(request, response)])
+    const movieRef = db.doc('movies/' + movieId);
+    const movieDoc = await movieRef.get()
+    if (movieDoc.exists) {
+        console.log("exists");
+        const movieData = movieDoc.data()
+        if (request.query.userId) {
+            const userId = request.query.userId;
+            const followers = movieData.followers?.map(x => x.id)
+            // check if user is subscribed to movie
+            res.isSubscribed = followers.includes(userId)            
+
+        }
+        res = {...res, ...movieData};
+        delete res.followers;
+        delete res.title
+    }
+
+    console.log("result: ", res);
+    return res
+}
+
+exports.getMovieDetailsWithCast = (request, response) => {
+    
+    Promise.all([getMovieDetails(request, response), getMovieCast(request, response), getLocalMovieDetails(request, response)])
         .then(function (results) {
             let movieDetails = results[0];
             
@@ -105,10 +131,12 @@ exports.getMovieDetailsWithCast = (request, response) => {
                 }
             });
 
+
             let detailsWithCast = {
                 ...movieDetails,
                 cast: [...filteredCast],
-                crew: [...directors]
+                crew: [...directors],
+                mowits: results[2],
             }
             
             return response.res.json(detailsWithCast);
