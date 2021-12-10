@@ -100,3 +100,7 @@ __blobstorage__
 __queuestorage__
 __azurite_db*__.json
 
+.vscode/tasks.json
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
