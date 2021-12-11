@@ -69,13 +69,17 @@ getLocalMovieDetails = async (request, response) => {
     const movieRef = db.doc('movies/' + movieId);
     const movieDoc = await movieRef.get()
     if (movieDoc.exists) {
-        console.log("exists");
         const movieData = movieDoc.data()
         if (request.query.userId) {
             const userId = request.query.userId;
             const followers = movieData.followers?.map(x => x.id)
             // check if user is subscribed to movie
-            res.isSubscribed = followers.includes(userId)            
+            if (followers !== undefined) {
+                res.isSubscribed = followers.includes(userId)  
+            } else {
+                res.isSubscribed = false;
+            }
+                      
 
         }
         res = {...res, ...movieData};
@@ -83,7 +87,6 @@ getLocalMovieDetails = async (request, response) => {
         delete res.title
     }
 
-    console.log("result: ", res);
     return res
 }
 
