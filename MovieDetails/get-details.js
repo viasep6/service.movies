@@ -4,7 +4,7 @@ const { db, admin } = require('../service.shared/Repository/Firebase/admin')
 getMovieDetails = (request, response) => {
     let config = {
         method: 'get',
-        url: `${process.env["TMDB_API_URL"]}/3/movie/${request.query.movieid}`,
+        url: `${process.env["TMDB_API_URL"]}/3/movie/${request.query.movieid}?append_to_response=videos`,
         headers: { 
             'Authorization': process.env["TMDB_API_TOKEN"]
         }};
@@ -96,12 +96,19 @@ exports.getMovieDetailsWithCast = (request, response) => {
         .then(function (results) {
             let movieDetails = results[0];
             
-            if (movieDetails.poster_path !== null || movieDetails.poster_path !== null) {
-                movieDetails.poster_path = process.env["TMDB_API_IMAGE_BASE_URL"] + movieDetails.poster_path;
-                movieDetails.backdrop_path = process.env["TMDB_API_IMAGE_BASE_URL"] + movieDetails.backdrop_path;
-            }
+            movieDetails.poster_path !== null ? movieDetails.poster_path = process.env["TMDB_API_IMAGE_BASE_URL"] + movieDetails.poster_path : null;
+            movieDetails.backdrop_path !== null ? movieDetails.backdrop_path = process.env["TMDB_API_IMAGE_BASE_URL"] + movieDetails.backdrop_path : null;
+            
             movieDetails.production_companies.map(company => company.logo_path = process.env["TMDB_API_IMAGE_BASE_URL"] + company.logo_path);
             
+            let filteredVideos = movieDetails.videos.results.filter(video => video.type === "Trailer" && video.site === "YouTube");
+            if (filteredVideos.length == 0) {
+                movieDetails.videos = null
+            } else {
+                delete movieDetails.videos;
+                movieDetails.trailer = process.env["YOUTUBE_WATCH_URL"] + filteredVideos[0].key;
+            }
+
             let genreArray = []
             movieDetails.genres.map(genres => genreArray.push(genres.name))
             movieDetails.genres = genreArray.join(", ");
