@@ -1,4 +1,4 @@
-const httpFunction = require('./get-details');
+const httpFunction = require('./index');
 const context = require('../testing/defaultContext')
 
 jest.mock('firebase-admin', () => ({
@@ -11,14 +11,13 @@ jest.mock('firebase-admin', () => ({
     apps: ["testAppID"]
   }));
 
-test('Http trigger should return known text', async () => {
+test('Valid Movie ID should return 200 status', async () => {
 
     const request = {
-        query: { name: 'Bill' }
+        query: { movieid: 2179 }
     };
 
-    await httpFunction.getMovieDetailsWithCast(request, context);
+    await httpFunction(context, request);
 
-    expect(context.log.mock.calls.length).toBe(1);
-    expect(context.res.body).toEqual('Hello Bill');
+    expect(context.res.status).toEqual(200);
 });
