@@ -11,7 +11,6 @@ module.exports = function (context, req) {
     return axios(config)
     .then(function (response)
     {
-        console.log(response.data);
         let filteredResponse = response.data.results.map(movie => {
 
             if (movie.poster_path !== null || response.data.results.poster_path !== null) {
