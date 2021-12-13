@@ -15,7 +15,7 @@ exports.followMovie = async (request, response) => {
         movieRef.set({
             title: request.body.title,
             followers: [user],
-            followcount: admin.firestore.FieldValue.increment(1)
+            followCount: admin.firestore.FieldValue.increment(1)
         })
         user.update({
             followCount: admin.firestore.FieldValue.increment(1)
